@@ -1,6 +1,7 @@
 {
-  "model_path": "./src/models/llama-2-7b-chat.Q4_K_M.gguf",
+  "chunk_size": 50,
+  "max_tokens": 300,
+  "final_tokens": 400,
   "temp_dir": "D:/Hackathon/TempDir",
-  "backup_dir": "D:/Hackathon/BackupDir",
-  "chunk_size": 50
+  "backup_dir": "D:/Hackathon/BackupDir"
 }
