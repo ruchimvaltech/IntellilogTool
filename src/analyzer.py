@@ -3,18 +3,25 @@ import shutil
 import json
 from llama_cpp import Llama
 
-# Load model
-llm = Llama(model_path="./src/models/llama-2-7b-chat.Q4_K_M.gguf")
-
 # Load parameter config
 with open("./src/parameter.json", "r") as f:
-    PARAMS = json.load(f)
+    params = json.load(f)
+
+model_path = params["model_path"]
+temp_dir = params["temp_dir"]
+backup_dir = params["backup_dir"]
+chunk_size = params["chunk_size"]
+
+# ------------------------
+# Initialize the LLaMA model
+# ------------------------
+llm = Llama(model_path=model_path)
 
 def filter_out_info(lines):
     """Remove lines with INFO keyword to reduce irrelevant tokens."""
     return [line for line in lines if "INFO" not in line]
 
-def split_lines_into_chunks(lines, chunk_size=PARAMS["chunk_size"]):
+def split_lines_into_chunks(lines, chunk_size=params["chunk_size"]):
     """Break long logs into smaller manageable parts."""
     for i in range(0, len(lines), chunk_size):
         yield lines[i:i + chunk_size]
@@ -64,7 +71,7 @@ Identify:
 4. Fix recommendations.
 Format the response in a bullet format.
 """
-        result = llm(prompt, max_tokens=PARAMS["max_tokens"], stop=["</s>"])
+        result = llm(prompt, max_tokens=params["max_tokens"], stop=["</s>"])
         partial_summaries.append(result["choices"][0]["text"].strip())
 
     combined_prompt = f"""
@@ -81,15 +88,13 @@ Remedial Actions:
 * ...
 * ...
 """
-    output = llm(combined_prompt, max_tokens=PARAMS["final_tokens"], stop=["</s>"])
+    output = llm(combined_prompt, max_tokens=params["final_tokens"], stop=["</s>"])
     final_summary = output["choices"][0]["text"].strip()
 
    
-     ## Step 4: Conditional cleanup
-    if "high memory" in final_summary.lower() or "low disk space" in final_summary.lower():
-        temp_dir = "D:/Hackathon/TempDir"
-        backup_dir = "D:/Hackathon/BackupDir"
+    # Trigger cleanup if certain issues detected
+    if "high memory usage" in final_summary.lower() or "low disk space" in final_summary.lower():
         clean_temp_folder(temp_dir, backup_dir)
-        print("Cleanup completed due to system resource issues.")
+        print("Temp files cleaned and moved after detecting high memory usage or low disk space.")
 
     return final_summary

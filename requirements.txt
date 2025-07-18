@@ -3,3 +3,4 @@ uvicorn
 python-multipart
 llama-cpp-python
 matplotlib
+jinja2
