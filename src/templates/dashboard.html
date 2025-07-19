@@ -10,7 +10,9 @@
       <input name="file" type="file" required />
       <button type="submit">Analyze</button>
     </form>
-
+    <form action="/analyzelatest" enctype="multipart/form-data" method="post">
+      <input type="submit" value="Analyze Latest Log" />
+    </form>
     {% if summary %}
     <a href="/download-summary" class="btn">Download summary.txt</a>
 

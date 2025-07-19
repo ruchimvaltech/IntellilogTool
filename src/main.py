@@ -6,7 +6,11 @@ from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+
 from analyzer import analyze_logs_with_llama
+# Import the logfile function from fetchlatestlogfile.py
+from fetchlatestlogfile import fetch_latest_log
+from fetchlatestlogfile import parse_log
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="src/static"), name="static")
@@ -53,6 +57,31 @@ async def analyze_log(request: Request, file: UploadFile):
         "suggestions": suggestions
     })
 
+# Route to handle latest log file analysis (POST request)
+
+log_file = fetch_latest_log()
+raw_log = parse_log(log_file)
+@app.post("/analyzelatest")
+async def analyzelatest_log():
+    # Read file content
+    #contents = await raw_log.read()
+
+    # Convert bytes to string
+    #log_text = raw_log.decode()
+    try:
+        # Analyze the log content using your LLaMA-based analyzer
+       summary = analyze_logs_with_llama(raw_log)
+    except Exception as e:
+        # If error occurs during analysis, return error message on browser
+        return HTMLResponse(content=f"<h3>Error: {e}</h3>", status_code=500)
+
+    # Save the generated summary to a text file
+    summary_path = "summary.txt"
+    with open(summary_path, "w", encoding="utf-8") as f:
+     f.write(summary)
+
+    # Return the file as a download
+     return FileResponse(summary_path, filename="summary.txt")
 @app.get("/download-summary", response_class=FileResponse)
 async def download_summary():
     return FileResponse("summary.txt", filename="summary.txt")
