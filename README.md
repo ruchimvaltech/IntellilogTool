@@ -14,6 +14,8 @@
 python -m venv venv
 source venv/bin/activate    # Windows: venv\Scripts\activate
 pip install -r requirements.txt
+pip install openai
+pip install streamlit pandas openai streamlit-aggrid plotly
 ```
 
 ## 🐴 LLaMA Model
@@ -33,3 +35,8 @@ Make sure to add a `sample_log.txt` file in the root folder with log content.
 ## 📊 Visualization
 
 Modify `visualizer.py` to add more advanced charts.
+
+
+
+## Run the app
+use streamlit run app.py 
