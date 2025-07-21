@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 
-from analyzer import analyze_logs_with_llama
+from gpt4connection import call_gpt_summary
 # Import the logfile function from fetchlatestlogfile.py
 from fetchlatestlogfile import fetch_latest_log
 from fetchlatestlogfile import parse_log
@@ -23,7 +23,7 @@ async def dashboard(request: Request):
 @app.post("/analyze", response_class=HTMLResponse)
 async def analyze_log(request: Request, file: UploadFile):
     log_data = await file.read()
-    summary = analyze_logs_with_llama(log_data.decode())
+    summary = call_gpt_summary(log_data.decode())
 
     with open("summary.txt", "w", encoding="utf-8") as f:
         f.write(summary)
@@ -70,7 +70,7 @@ async def analyzelatest_log():
     #log_text = raw_log.decode()
     try:
         # Analyze the log content using your LLaMA-based analyzer
-       summary = analyze_logs_with_llama(raw_log)
+       summary = call_gpt_summary(raw_log)
     except Exception as e:
         # If error occurs during analysis, return error message on browser
         return HTMLResponse(content=f"<h3>Error: {e}</h3>", status_code=500)
