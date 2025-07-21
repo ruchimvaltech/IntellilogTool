@@ -1,60 +1,76 @@
-import sys
-import os
-
-# Add the current directory (where this file is) to the Python path.
-# This helps ensure other files like `analyzer.py` can be imported correctly.
+import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-# Import the core analysis function from analyzer.py
+from fastapi import FastAPI, UploadFile, Request
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
+
 from analyzer import analyze_logs_with_llama
+# Import the logfile function from fetchlatestlogfile.py
+from fetchlatestlogfile import fetch_latest_log
+from fetchlatestlogfile import parse_log
 
-# FastAPI for web server, UploadFile to handle file uploads
-from fastapi import FastAPI, UploadFile
-from fastapi.responses import FileResponse, HTMLResponse
-
-# Create a FastAPI app instance
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="src/static"), name="static")
+templates = Jinja2Templates(directory="src/templates")
 
-# Route for home page (GET request) that returns a file upload form
 @app.get("/", response_class=HTMLResponse)
-async def form_ui():
-    return """
-<html>
-    <head>
-        <title>Intellilog Log Analyzer</title>
-        <style>
-            body { font-family: Arial, sans-serif; padding: 40px; background: #f3f4f6; }
-            h2 { color: #2563eb; }
-            form { background: white; padding: 20px; border-radius: 8px; }
-            input[type=file] { margin-bottom: 10px; }
-            input[type=submit] { background: #2563eb; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
-            input[type=submit]:hover { background: #1d4ed8; }
-        </style>
-    </head>
-    <body>
-        <h2>Intellilog - Upload Log File</h2>
-        <!-- HTML form to upload a log file -->
-        <form action="/analyze" enctype="multipart/form-data" method="post">
-            <input name="file" type="file" required>
-            <br>
-            <input type="submit" value="Upload and Analyze">
-        </form>
-    </body>
-</html>
-    """
+async def dashboard(request: Request):
+    return templates.TemplateResponse("dashboard.html", {"request": request, "summary": None})
 
-# Route to handle file upload and analysis (POST request)
-@app.post("/analyze")
-async def analyze_log(file: UploadFile):
+@app.post("/analyze", response_class=HTMLResponse)
+async def analyze_log(request: Request, file: UploadFile):
+    log_data = await file.read()
+    summary = analyze_logs_with_llama(log_data.decode())
+
+    with open("summary.txt", "w", encoding="utf-8") as f:
+        f.write(summary)
+
+        # Extract issues and suggestions from structured summary
+    lines = summary.splitlines()
+    issues, suggestions = [], []
+    in_root, in_remedy = False, False
+
+    for line in lines:
+        line = line.strip()
+        if "root cause" in line.lower():
+            in_root, in_remedy = True, False
+            continue
+        if "remedial action" in line.lower():
+            in_remedy, in_root = True, False
+            continue
+
+        if line.startswith("*"):
+            if in_root:
+                issues.append(line.strip("* ").strip())
+            elif in_remedy:
+                suggestions.append(line.strip("* ").strip())
+
+
+
+    return templates.TemplateResponse("dashboard.html", {
+        "request": request,
+        "summary": summary,
+        "issues": issues,
+        "suggestions": suggestions
+    })
+
+# Route to handle latest log file analysis (POST request)
+
+log_file = fetch_latest_log()
+raw_log = parse_log(log_file)
+@app.post("/analyzelatest")
+async def analyzelatest_log():
     # Read file content
-    contents = await file.read()
+    #contents = await raw_log.read()
 
     # Convert bytes to string
-    log_text = contents.decode()
-
+    #log_text = raw_log.decode()
     try:
         # Analyze the log content using your LLaMA-based analyzer
-        summary = analyze_logs_with_llama(log_text)
+       summary = analyze_logs_with_llama(raw_log)
     except Exception as e:
         # If error occurs during analysis, return error message on browser
         return HTMLResponse(content=f"<h3>Error: {e}</h3>", status_code=500)
@@ -62,7 +78,10 @@ async def analyze_log(file: UploadFile):
     # Save the generated summary to a text file
     summary_path = "summary.txt"
     with open(summary_path, "w", encoding="utf-8") as f:
-        f.write(summary)
+     f.write(summary)
 
     # Return the file as a download
-    return FileResponse(summary_path, filename="summary.txt")
+     return FileResponse(summary_path, filename="summary.txt")
+@app.get("/download-summary", response_class=FileResponse)
+async def download_summary():
+    return FileResponse("summary.txt", filename="summary.txt")

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Intellilog - AI Log Analyzer</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <h1>Intellilog - AI Log Analyzer</h1>
+    <form action="/analyze" enctype="multipart/form-data" method="post">
+      <input name="file" type="file" required />
+      <button type="submit">Analyze</button>
+    </form>
+    <form action="/analyzelatest" enctype="multipart/form-data" method="post">
+      <input type="submit" value="Analyze Latest Log" />
+    </form>
+    {% if summary %}
+    <a href="/download-summary" class="btn">Download summary.txt</a>
+
+    <h2>Summary:</h2>
+    <pre>{{ summary }}</pre>
+
+    <h3>Structured Table:</h3>
+    {% if issues %}
+    <table border="1">
+      <tr>
+        <th>Error</th>
+        <th>Suggestion</th>
+      </tr>
+      {% for i in range(issues|length) %}
+      <tr>
+        <td>{{ issues[i] }}</td>
+        <td>{{ suggestions[i] if i < suggestions|length else 'N/A' }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p>No structured issues detected.</p>
+    {% endif %} {% endif %}
+  </body>
+</html>
