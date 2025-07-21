@@ -5,7 +5,7 @@ import os
 # ------------------------
 # Load configuration parameters from JSON file
 # ------------------------
-with open("./src/parameter.json", "r") as f:
+with open("./parameter.json", "r") as f:
     params = json.load(f)
 log_dir = params["log_folder_path"]
 
