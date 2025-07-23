@@ -46,8 +46,8 @@ Logs:
         return []
 
 # ---- Streamlit UI ----
-st.set_page_config(page_title="GPT Log Analyzer", layout="wide")
-st.title("📊 GPT-4.1 Log Analyzer with Summary + Chart")
+st.set_page_config(page_title="Log Summarizer", layout="wide")
+st.title("📊 Intellilog Dashboard")
 
 uploaded_file = st.file_uploader("📁 Upload your .log or .txt file", type=["log", "txt"])
 triggerlatestfile = st.button("Analyse Latest Log file")
@@ -56,7 +56,7 @@ if uploaded_file:
     log_text = read_log_file(uploaded_file)
     st.text_area("📜 Raw Logs", log_text, height=200)
 
-    with st.spinner("Analyzing logs with GPT-4.1..."):
+    with st.spinner("Analyzing logs ..."):
         summary = call_gpt_summary(log_text)
     try:
         # Clean content if needed
