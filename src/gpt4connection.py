@@ -3,6 +3,7 @@ from analyzer import filter_out_info
 from analyzer import split_lines_into_chunks
 from analyzer import clean_temp_folder
 import json
+from notifier import send_mail_via_sendgrid
 client = AzureOpenAI(
     api_key="995bG4KqqLjDNhtX6kT7RpQdEAR0dWyTx0vtuamAk5LCkTLvg5UuJQQJ99BGACfhMk5XJ3w3AAAAACOGEasD",
     api_version="2025-01-01-preview",
@@ -15,6 +16,8 @@ with open("./parameter.json", "r") as f:
 temp_dir = params["temp_dir"]
 backup_dir = params["backup_dir"]
 chunk_size = params["chunk_size"]
+recipients = params["email"]["recipients"]
+sender_email = params["email"]["sender"]
 
 def call_gpt_summary(logs: str) -> str:
     print("Starting analysis...")
@@ -76,12 +79,80 @@ Return a summary in JSON format with these fields:
         max_tokens=1024
     )
     final_summary = response.choices[0].message.content
+
   # Trigger cleanup if certain issues detected
     if "high memory usage" in final_summary.lower() or "low disk space" in final_summary.lower():
         clean_temp_folder(temp_dir, backup_dir)
         print("Temp files cleaned and moved after detecting high memory usage or low disk space.")
 
-        # Try to extract a JSON array from possibly messy text
-    
-    
+    # ✅ Check for CPU-related issues and send alert if needed
+    trigger_cpu_alert_if_needed(final_summary)
+
+  # Try to extract a JSON array from possibly messy text
     return final_summary
+
+
+#Generates an email subject and HTML-formatted body using GPT based on a log summary.
+def generate_email_content(log_summary: str) -> dict:
+    prompt = f"""
+You are an AI assistant writing alert emails.
+
+Based on the log summary below, generate:
+- A short and urgent **email subject** (max 12 words)
+- A readable and professional **HTML-formatted body** (max 150 words)
+
+Log Summary:
+{log_summary}
+
+Return output in this JSON format:
+{{
+  "subject": "Your subject here",
+  "body": "Your HTML-formatted body here"
+}}
+"""
+
+    try:
+        response = client.chat.completions.create(
+            model="log-summarizer",  # your Azure OpenAI deployment name
+            messages=[
+                {"role": "system", "content": "You write clear and concise alert emails."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.5,
+            max_tokens=300
+        )
+        return json.loads(response.choices[0].message.content)
+    except Exception as e:
+        print("❌ GPT failed to generate email content:", e)
+        return {
+            "subject": "🚨 CPU Alert from IntelliLog",
+            "body": f"<pre>{log_summary}</pre>"
+        }
+#Checks if the log summary contains CPU-related alert keywords and sends an email alert.
+def trigger_cpu_alert_if_needed(final_summary: str):
+    cpu_alert_keywords = [
+        "high cpu usage", "cpu usage exceeded", "high cpu load", "cpu threshold breach"
+    ]
+
+    if not any(keyword in final_summary.lower() for keyword in cpu_alert_keywords):
+        return  # No alert condition met
+
+    print("⚠️ High CPU usage detected. Generating email...")
+
+    # Let GPT create subject & HTML body
+    email_content = generate_email_content(final_summary)
+
+    for recipient in recipients:
+        clean_email = recipient.strip()
+        print(f"📨 Sending alert to: {clean_email}")
+        success = send_mail_via_sendgrid(
+        sender_mail=sender_email,
+        recipient_email=clean_email,
+        subject=email_content["subject"],
+        body_html=email_content["body"]
+        )
+
+    if success:
+        print("✅ CPU alert email sent.")
+    else:
+        print("❌ Email sending failed.")
