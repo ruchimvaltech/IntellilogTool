@@ -10,7 +10,19 @@ from fetchlatestlogfile import parse_log
 
 
 
-# ---- Functions ----
+# ----------- Utility Function to Format Summary Text -----------
+def format_summary_text(summary):
+    lines = []
+    for i, item in enumerate(summary, 1):
+        lines.append(f"Issue {i}:")
+        lines.append(f"• Timestamp: {item.get('timestamp', '')}")
+        lines.append(f"• Level: {item.get('level', '')}")
+        lines.append(f"• Summary: {item.get('event_summary', '')}")
+        lines.append(f"• Suggestion: {item.get('recommended_action', '')}")
+        lines.append("")  # Add a blank line between issues
+    return "\n".join(lines)
+
+# ----------- Log File Reader -----------
 def read_log_file(uploaded_file):
     return uploaded_file.read().decode("utf-8")
 
@@ -52,6 +64,7 @@ st.title("📊 Intellilog Dashboard")
 uploaded_file = st.file_uploader("📁 Upload your .log or .txt file", type=["log", "txt"])
 triggerlatestfile = st.button("Analyse Latest Log file")
 
+# ----------- If User Uploads a File -----------
 if uploaded_file:
     log_text = read_log_file(uploaded_file)
     st.text_area("📜 Raw Logs", log_text, height=200)
@@ -95,6 +108,15 @@ if uploaded_file:
                      })
 
         st.plotly_chart(fig, use_container_width=True)
+
+        # ---- Download Summary Button (Plain Text) ----
+        summary_text = format_summary_text(summary)
+        st.download_button(
+            label="⬇️ Download Summary as TXT",
+            data=summary_text,
+            file_name="summary.txt",
+            mime="text/plain"
+        )
 
 
 
@@ -144,3 +166,12 @@ if triggerlatestfile:
                      })
 
         st.plotly_chart(fig, use_container_width=True)
+
+        # ---- Download Summary Button (Plain Text) ----
+        summary_text = format_summary_text(summary)
+        st.download_button(
+            label="⬇️ Download Summary as TXT",
+            data=summary_text,
+            file_name="summary.txt",
+            mime="text/plain"
+        )
