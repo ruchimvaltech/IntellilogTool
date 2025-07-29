@@ -2,6 +2,7 @@ from openai import AzureOpenAI
 from analyzer import filter_out_info
 from analyzer import split_lines_into_chunks
 from analyzer import clean_temp_folder
+from analyzer import ensure_directories_exist
 import json
 import re
 from notifier import send_mail_via_sendgrid
@@ -20,6 +21,7 @@ chunk_size = params["chunk_size"]
 recipients = params["email"]["recipients"]
 sender_email = params["email"]["sender"]
 
+
 def call_gpt_summary(logs: str) -> str:
     print("Starting analysis...")
     lines = logs.strip().splitlines()
@@ -31,9 +33,9 @@ def call_gpt_summary(logs: str) -> str:
         chunk_text = "\n".join(chunk)
     prompt = f"""
    You are an AI log analyzer. Examine this log snippet:
-
+ 
 {chunk_text}
-
+ 
 Identify:
 1. Application/service name.
 2. Exceptions or issues (e.g., null check, memory usage, disk space).
@@ -47,6 +49,7 @@ Return a summary in JSON format with these fields:
 - action_needed (Yes/No)
 - recommended_action
 """
+    
     result = client.chat.completions.create(
         model="log-summarizer",  # This is the *deployment name*, not the model family name
         messages=[
@@ -59,9 +62,9 @@ Return a summary in JSON format with these fields:
 
     combined_prompt = f"""
 You're an expert log summarizer. Combine the following partial summaries into one summary.
-
+ 
 {''.join(partial_summaries)}
-Analyze the logs below and return a JSON array, even if there's only one event.
+Analyze the logs below and return a JSON array, even if there's only one event.Dont merge partial summary.
 Return a summary in JSON format with these fields:
 - timestamp
 - level (INFO, WARNING, ERROR)
@@ -203,6 +206,7 @@ def trigger_memory_or_disk_alert_if_needed(final_summary: str):
     disk_issue = any(re.search(p, lowered) for p in disk_patterns)
 
     if memory_issue or disk_issue:
+        ensure_directories_exist(temp_dir, backup_dir)
         clean_temp_folder(temp_dir, backup_dir)
         print("🧹 Temp files cleaned and moved after detecting high memory usage or low disk space.")
 
