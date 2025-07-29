@@ -59,3 +59,10 @@ Remedial Actions:
 {''.join([f"* {r}\n" for r in remedies])}
 By addressing these issues, the application or service '{app_name}' can run smoothly and efficiently, providing a better user experience."""
 
+# ------------------------------------------------------------
+# ensure  directory exist
+# ------------------------------------------------------------
+def ensure_directories_exist(*paths):
+    """Ensure each path exists. Create folders if missing."""
+    for path in paths:
+        os.makedirs(path, exist_ok=True)
