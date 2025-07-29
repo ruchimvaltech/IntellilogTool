@@ -1,0 +1,28 @@
+[2025-07-29 14:45:23] INFO  Transaction initiated
+UserID: 102394
+SessionID: ab12c3de-4567-89ef-gh12-ijklmn345678
+CartID: C987654
+Items: [{"item_id": "SKU12345", "qty": 1, "price": 1499.00}, {"item_id": "SKU67890", "qty": 2, "price": 399.00}]
+TotalAmount: 2297.00
+PaymentMethod: CreditCard (Visa)
+
+[2025-07-29 14:45:24] INFO  Payment gateway request initiated
+Gateway: Razorpay
+TransactionID: RPX-88993322
+Amount: 2297.00 INR
+
+[2025-07-29 14:45:25] ERROR Payment gateway response failed
+GatewayResponseCode: 402
+GatewayResponseMessage: Payment declined by issuing bank
+BankErrorCode: 57
+BankErrorMessage: Transaction not permitted to cardholder
+
+[2025-07-29 14:45:25] WARN  Transaction failed
+FailureReason: Payment Declined
+SuggestedAction: Ask user to try another card or contact their bank
+RetryEligible: true
+
+[2025-07-29 14:45:26] INFO  User notified via UI and email
+NotificationStatus: SUCCESS
+EmailSentTo: user@example.com
+UIMessage: "Your payment could not be completed. Please try again or use a different payment method."

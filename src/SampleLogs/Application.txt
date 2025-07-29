@@ -1,0 +1,21 @@
+2025-07-24 10:00:00,012 - INFO - Starting application: OrderService v3.2.0
+2025-07-24 10:00:01,150 - INFO - Connecting to SOLR search service...
+2025-07-24 10:00:01,982 - ERROR - SOLR query failed: connection refused at http://solr.local:8983/solr/products
+2025-07-24 10:00:02,010 - INFO - Loading product catalog from /data/products.csv
+2025-07-24 10:00:03,500 - ERROR - Field 'product_label' is null for product_id: 102938
+2025-07-24 10:00:03,501 - ERROR - NullReferenceException in ProductMapper.mapToDTO()
+2025-07-24 10:00:04,002 - INFO - Attempting to fallback to default label
+2025-07-24 10:00:04,310 - ERROR - Failed to parse 'price_in_cents' → ValueError: Expected int but got string '12.99'
+2025-07-24 10:00:04,988 - WARNING - Inconsistent field name: 'ProductLabel' vs 'product_label'
+2025-07-24 10:00:05,300 - ERROR - Email service failed to send confirmation: SMTPException - Connection timed out
+2025-07-24 10:00:06,002 - ERROR - UserService unavailable at http://userservice.internal/api/user/9087
+2025-07-24 10:00:06,090 - INFO - Retrying UserService in 5 seconds...
+2025-07-24 10:00:06,130 - ERROR - MemoryWarning: PricingEngine heap size exceeded threshold
+2025-07-24 10:00:06,788 - INFO - Triggering cleanup of /tmp/order_batch_4098
+2025-07-24 10:00:07,901 - ERROR - Application shutdown due to unhandled exception in NotificationService
+2025-07-24 10:00:08,000 - INFO - Backup written to /var/logs/orderservice/archive_20250724.tar.gz
+2025-07-20 10:45:32,208 - INFO - Connected to PostgreSQL database
+2025-07-20 10:46:00,123 - INFO - Starting scheduled job: UserSyncJob
+2025-07-20 10:46:05,232 - ERROR - Database connection failed: timeout after 30s
+2025-07-20 10:46:05,233 - ERROR - Retrying database connection...
+2025-07-20 10:46:07,800 - INFO - UserSyncJob completed successfully
