@@ -1,6 +1,7 @@
 import json
 import re
 import os
+from analyzer import ensure_directories_exist
 
 # ------------------------
 # Load configuration parameters from JSON file
@@ -9,9 +10,9 @@ with open("./parameter.json", "r") as f:
     params = json.load(f)
 log_dir = params["log_folder_path"]
 
-
 def fetch_latest_log():
     if not os.path.exists(log_dir):
+        ensure_directories_exist(log_dir)
         raise FileNotFoundError(f"❌ Log directory '{log_dir}' does not exist.")
 
     logs = [
