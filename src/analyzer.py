@@ -1,6 +1,7 @@
 import os
 import shutil
 import json
+import re
 
 # ---------------------------------------------
 # Load parameter configuration from JSON file
@@ -66,3 +67,18 @@ def ensure_directories_exist(*paths):
     """Ensure each path exists. Create folders if missing."""
     for path in paths:
         os.makedirs(path, exist_ok=True)
+
+
+# Extract clean JSON array
+def extract_json_array(text):
+        """Extract the first JSON array from the text using a regex pattern."""
+        match = re.search(r"\[\s*{.*?}\s*]", text, re.DOTALL)
+        if match:
+            try:
+                return json.loads(match.group())
+            except json.JSONDecodeError as e:
+                print("❌ JSON decoding failed:", e)
+                print("🔎 Raw match:", match.group())
+                return []
+        print("❌ No JSON array found in text.")
+        return []
