@@ -4,3 +4,5 @@ jinja2
 openai
 sendgrid
 python-dotenv
+streamlit pandas
+streamlit-aggrid plotly
