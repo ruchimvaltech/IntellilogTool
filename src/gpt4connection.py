@@ -3,6 +3,7 @@ from analyzer import filter_out_info
 from analyzer import split_lines_into_chunks
 from analyzer import clean_temp_folder
 from analyzer import ensure_directories_exist
+from analyzer import extract_json_array
 import json
 import re
 from notifier import send_mail_via_sendgrid
@@ -42,7 +43,7 @@ Identify:
 3. Root causes.
 4. Fix recommendations.
 Analyze the logs below and return a JSON array, even if there's only one event.
-Return a summary in JSON format with these fields:
+Return a summary in JSON format only with these fields:
 - timestamp
 - level (INFO, WARNING, ERROR)
 - event_summary
@@ -64,8 +65,8 @@ Return a summary in JSON format with these fields:
 You're an expert log summarizer. Combine the following partial summaries into one summary.
  
 {''.join(partial_summaries)}
-Analyze the logs below and return a JSON array, even if there's only one event.Dont merge partial summary.
-Return a summary in JSON format with these fields:
+Analyze the logs below and return a JSON array, even if there's only one event. Don't merge partial summary.
+Return a summary in JSON format only with these fields:
 - timestamp
 - level (INFO, WARNING, ERROR)
 - event_summary
@@ -84,14 +85,17 @@ Return a summary in JSON format with these fields:
     )
     final_summary = response.choices[0].message.content
 
-    # Trigger cleanup if certain issues detected
+    # Trigger alerts for High disk and memory issue
     trigger_memory_or_disk_alert_if_needed(final_summary)
 
-    # ✅ Check for CPU-related issues and send alert if needed
+    #Tigger alerts for High cpu usage issue
     trigger_cpu_alert_if_needed(final_summary)
 
-  # Try to extract a JSON array from possibly messy text
-    return final_summary
+    #Extract json array
+    
+    parsed_summary = extract_json_array(final_summary)
+    return json.dumps(parsed_summary, indent=2)
+
 
 
 #Generates an email subject and HTML-formatted body using GPT based on a log summary.
