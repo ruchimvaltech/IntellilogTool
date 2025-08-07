@@ -2,9 +2,10 @@ import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from dotenv import load_dotenv
+import streamlit as st
 
 # Load the .env file
-load_dotenv()
+#load_dotenv()
 
 # Create the Mail object with sender, recipient, subject, and content
 def send_mail_via_sendgrid(sender_mail,recipient_email, subject, body_html):
@@ -16,7 +17,7 @@ def send_mail_via_sendgrid(sender_mail,recipient_email, subject, body_html):
     )
     # Initialize the SendGrid client with the API key and send email
     try:
-        api_key = os.environ.get("SENDGRID_API_KEY")
+        api_key = st.secrets["SENDGRID_API_KEY"]
         if not api_key:
             print("❌ SendGrid API key not found in environment variables.")
             return False

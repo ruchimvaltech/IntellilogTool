@@ -14,23 +14,29 @@
 
 ```bash
 pip install -r requirements.txt
-pip install openai
-pip install streamlit pandas openai streamlit-aggrid plotly
 ```
 
-## create .env under src and place your secret key under variable SENDGRID_API_KEY:
+## Add some files in below folder in specific path
 
-SENDGRID_API_KEY=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
+- "D:/Hackathon/TempDir"
 
-## create below folders in specific path
+## Add some log files in below folder
 
 - "D:/Hackathon/App_Data/logs",
-- "D:/Hackathon/TempDir",
-- "D:/Hackathon/BackupDir"
+
+#############################################################################################
+
+## For Email triggering -
+
+## you can configure secrets.toml file. Create a .streamlit directory in the root of your project and add a file named secrets.toml inside it. Define your secrets in this file using TOML syntax, for example: API_KEY = "your_api_key_here".
+
+SENDGRID_API_KEY="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"
+
+- Specify the valid recipient's email address in Parameter.json for email triggering.
 
 #############################################################################################
 
 ## 📊 Run the app
 
-Go to "./src" folder
-Run "streamlit run app.py"
+Go to root folder
+Run "streamlit run src/app.py"

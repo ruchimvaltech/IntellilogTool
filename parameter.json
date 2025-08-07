@@ -7,7 +7,11 @@
   "temp_dir": "D:/Hackathon/TempDir",
   "backup_dir": "D:/Hackathon/BackupDir",
   "email": {
-    "recipients": ["ruchi.mishra@valtech.com","ayushi.sinha@valtech.com","arpana.kumari@valtech.com"],
-    "sender": "ayushisinha63@outlook.com"
+    "recipients": [
+      "ruchi.mishra@valtech.com",
+      "ayushi.sinha@valtech.com",
+      "arpana.kumari@valtech.com"
+    ],
+    "sender": "newsomething8947@outlook.com"
   }
 }
