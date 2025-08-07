@@ -20,9 +20,9 @@ pip install -r requirements.txt
 
 - "D:/Hackathon/TempDir"
 
-## Add some log files in below folder
+## For analyzing the latest log please give your path in paramete.json
 
-- "D:/Hackathon/App_Data/logs",
+- "log_folder_path": "src/SampleLogs/"
 
 #############################################################################################
 
