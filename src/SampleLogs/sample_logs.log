@@ -1,0 +1,33 @@
+[2025-07-11 12:00:02] INFO Server started successfully
+[2025-07-11 12:00:05] ERROR Low disk space 
+[2025-07-11 12:00:10] ERROR Database connection failed
+[2025-07-11 12:00:15] INFO Health check passed
+[2025-07-11 12:00:20] DEBUG User input received
+[2025-07-11 12:00:25] ERROR Timeout while processing request
+[2025-07-11 12:00:30] WARNING Disk space running low
+[2025-07-11 12:00:35] INFO Scheduled task executed
+[2025-07-11 12:00:40] DEBUG Config loaded
+[2025-07-11 12:00:45] INFO Server shut down gracefully
+[2025-07-22 10:15:03] INFO   User login attempt for username: johndoe
+[2025-07-22 10:15:03] ERROR  Database connection failed: timeout while connecting to jdbc:mysql://localhost:3306/mydb
+[2025-07-22 10:15:03] WARNING  Disk space is below threshold: 5% remaining
+[2025-07-22 10:15:03] INFO   Sending welcome email to johndoe@example.com
+[2025-07-22 10:15:03] ERROR Failed to send email: java.lang.NullPointerException at EmailService.java:102
+[2025-07-22 10:15:03] INFO   User registration completed for johndoe
+[2025-07-22 10:15:04] ERROR  Solr index initialization failed: core 'search_index' not found
+[2025-07-22 10:15:05] INFO  Scheduled job 'DailyReportGenerator' started
+[2025-07-22 10:15:05] ERROR  Report generation failed due to missing template: template/report_daily.tpl
+[2025-07-11 12:00:45] ERROR [Index=tce_search_web_index] DefaultSolrSearchIndexesInitializer: Initialization has failed.
+Exception: SolrNet.Exceptions.SolrConnectionException
+Message: <html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<title>Error 404 Not Found</title>
+</head>
+<body><h2>HTTP ERROR 404</h2>
+<p>Problem accessing /solr/tce_search_web_index/schema. Reason:
+<pre>    Not Found</pre></p>
+</body>
+</html>
+[2025-07-01 10:33:22] ERROR: System.NullReferenceException: Object reference not set to an instance of an object.
+   at MyApp.Services.EmailService.SendEmail(String recipient, String message) in EmailService.cs:line 45
