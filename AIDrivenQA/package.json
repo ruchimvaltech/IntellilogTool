@@ -1,0 +1,26 @@
+{
+  "name": "hanush",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:intellilog": "playwright test intellilog-automation.spec.ts",
+    "test:intellilog-enhanced": "playwright test intellilog-enhanced.spec.ts",
+    "test:intellilog-robust": "playwright test intellilog-robust.spec.ts",
+    "test:intellilog-streamlined": "playwright test intellilog-streamlined.spec.ts",
+    "test:original": "playwright test test-1.spec.ts",
+    "test:debug": "playwright test debug-extended.spec.ts",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^24.2.0"
+  }
+}

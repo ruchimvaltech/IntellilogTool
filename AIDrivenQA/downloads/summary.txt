@@ -1,0 +1,5 @@
+Issue 1:
+• Timestamp: 2025-07-29 14:45:25
+• Level: ERROR
+• Summary: Payment gateway response failed: Payment declined by issuing bank (GatewayResponseCode: 402, BankErrorCode: 57 - Transaction not permitted to cardholder). Transaction failed due to payment being declined.
+• Suggestion: Prompt user to try a different card or contact their bank. Ensure clear error messaging is displayed and consider logging additional details for support. Notify user of failure and suggest alternative payment methods. Allow retry if eligible.
